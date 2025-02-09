@@ -1,4 +1,4 @@
-#include "stm32_hal/hal/hal.h"
+#include "stm32_drivers/led/led_on_off.h"
 #include <stdint.h>
 
 #define RCC_BASE 0x40023800
@@ -22,11 +22,11 @@ int main() {
 
   while(1) {
     if(!(GPIOB_IDR & (1 << 4))) {
-     hal_led_on_off(1);
+      led_on_off(1);
     } else if(!(GPIOB_IDR & (1 << 5))) {
-     hal_led_on_off(1);
+      led_on_off(1);
     } else {
-     hal_led_on_off(0);
+      led_on_off(0);
     }
   }
 }
