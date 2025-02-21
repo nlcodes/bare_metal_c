@@ -18,12 +18,11 @@
 #define NUM_OF_BUTTONS 16
 
 int matrix_buttons[NUM_OF_BUTTONS] = {0};
-volatile uint8_t running = 1;
-
-int main() {
+void gpio_init() {
 
   /* Enable GPIOB clock */
   RCC_AHB1ENR |= (1 << 1);
+  for(volatile int i = 0; i < 10000; i++);
 
   /* Set PB4-7 as inputs with pull-up (rows) */
   /* Clear mode bits */
@@ -41,16 +40,22 @@ int main() {
 
   /* Set to output mode */
   GPIOB_MODER |= 0x55; 
+}
+
+int main() {
+  volatile uint8_t running = 1;
+
+  gpio_init();
 
   while(running) {
 
     /* Columns */
     for(int i = 0; i < 4; i++) {
-    GPIOB_ODR = ~(1 << i);  
+      GPIOB_ODR = ~(1 << i);  
 
-    for(volatile uint8_t i = 0; i < 100; i++);
+      for(volatile uint8_t delay = 0; delay < 100; delay++);
 
-    uint32_t rows = GPIOB_IDR;
+      uint32_t rows = GPIOB_IDR;
 
       /* Rows
        * Map all 4x4 button matrix to array
@@ -72,7 +77,7 @@ int main() {
        * Mapping success
        * Check notes.txt for pinout wiring
        */
-      if(matrix_buttons[7] == 1) {
+      if(matrix_buttons[0] == 1) {
         hal_led_on_off(1);
         running = 0;
       } else {
